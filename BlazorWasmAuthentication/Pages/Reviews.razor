@@ -1,0 +1,60 @@
+﻿@using BlazorWasmAuthentication.Models;
+@using BlazorWasmAuthentication.Services;
+@inject IReviewRepository Repository
+
+@if (ErrorMessage is null)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in ReviewList)
+            {
+                <tr>
+                    <td>@review.Title</td>
+                    <td>@review.Rating</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="error">@ErrorMessage</p>
+}
+
+@code {
+
+    private IEnumerable<BookReview> ReviewList { get; set; } = Enumerable.Empty<BookReview>();
+
+    [Parameter]
+    public string Style { get; set; } = "all";
+    public string? ErrorMessage { get; set; }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        try
+        {
+            ErrorMessage = "Loading...";
+
+            await base.OnParametersSetAsync();
+
+            ReviewList = (Style switch
+            {
+                "summary" => await Repository.GetReviewSummariesAsync(),
+                _ => await Repository.GetReviewsAsync()
+            })
+            .OrderBy(r => r.Title);
+
+            ErrorMessage = null;
+        }
+        catch
+        {
+            ErrorMessage = "Failed to retrieve data.";
+        }
+    }
+}

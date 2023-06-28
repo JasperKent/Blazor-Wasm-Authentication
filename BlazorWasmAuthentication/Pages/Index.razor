@@ -1,0 +1,11 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+
+@code{
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        NavigationManager.NavigateTo("/all-reviews");
+    }
+}
