@@ -89,3 +89,9 @@ form div {
     form div:first-child {
         margin-top: 0.5rem;
     }
+
+
+fieldset {
+    margin-top: 0.5rem;
+    border-radius: 5px;
+}
