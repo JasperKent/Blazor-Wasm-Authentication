@@ -1,19 +1,21 @@
 ﻿@page "/login"
 @using BlazorWasmAuthentication.Models
 
-<EditForm Model="@model" OnValidSubmit="SubmitAsync">
-    <div>
-        <label for="username">Username:</label>
-        <InputText @bind-Value="@model.Username" id="username" name="username" required />
-    </div>
-    <div>
-        <label for="password">Password:</label>
-        <InputText typeof="password" @bind-Value="@model.Password" id="password" name="password" required />
-    </div>
-    <div>
-        <button type="submit">Login</button>
-    </div>
-</EditForm>
+<fieldset>
+    <EditForm Model="@model" OnValidSubmit="SubmitAsync">
+        <div>
+            <label for="username">Username:</label>
+            <InputText @bind-Value="@model.Username" id="username" name="username" required />
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <InputText type="password" @bind-Value="@model.Password" id="password" name="password" required />
+        </div>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+    </EditForm>
+</fieldset>
 
 @code {
     private LoginModel model = new LoginModel();
