@@ -7,9 +7,9 @@ namespace BlazorWasmAuthentication.Services
     {
         private readonly HttpClient _httpClient;
 
-        public ReviewRepository(HttpClient httpClient)
+        public ReviewRepository(IHttpClientFactory factory)
         {
-            _httpClient = httpClient;
+            _httpClient = factory.CreateClient("ServerApi");
         }
 
         public async Task<IEnumerable<BookReview>> GetReviewsAsync()
