@@ -1,7 +1,10 @@
 ﻿@page "/login"
 @using BlazorWasmAuthentication.Models
+@using BlazorWasmAuthentication.Services;
+@inject IAuthenticationService AuthenticationService;
 
-<fieldset>
+
+<fieldset disabled="@(expiration is not null)">
     <EditForm Model="@model" OnValidSubmit="SubmitAsync">
         <div>
             <label for="username">Username:</label>
@@ -17,11 +20,34 @@
     </EditForm>
 </fieldset>
 
+@if(expiration is not null)
+{
+    <p>You are logged in until @expiration?.ToLongTimeString()</p>
+}
+
+@if (errorMessage is not null)
+{
+    <p class="error">@errorMessage</p>
+}
+
 @code {
     private LoginModel model = new LoginModel();
+    private DateTime? expiration;
+    private string? errorMessage;
 
     private async Task SubmitAsync()
     {
-        
+        try
+        {
+            expiration = await AuthenticationService.LoginAsync(model);
+
+            errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            expiration = null;
+
+            errorMessage = ex.Message;
+        }
     }
 }
