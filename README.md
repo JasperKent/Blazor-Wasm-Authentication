@@ -1,5 +1,5 @@
 # Blazor-Wasm-Authentication
-Source code accompanying the video https://youtu.be/GTXvMu6Ex-o
+Source code accompanying the videos https://youtu.be/GTXvMu6Ex-o and https://youtu.be/0iJqh2lzEXo
 
 Server code available at: https://github.com/JasperKent/WebApi-Authentication
 
