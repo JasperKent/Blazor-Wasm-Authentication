@@ -1,4 +1,5 @@
 ﻿using BlazorWasmAuthentication.Services;
+using System.Net;
 using System.Net.Http.Headers;
 
 namespace BlazorWasmAuthentication.Handlers
@@ -7,6 +8,7 @@ namespace BlazorWasmAuthentication.Handlers
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IConfiguration _configuration;
+        private bool _refreshing;
 
         public AuthenticationHandler(IAuthenticationService authenticationService, IConfiguration configuration)
         {
@@ -22,7 +24,31 @@ namespace BlazorWasmAuthentication.Handlers
             if (isToServer && !string.IsNullOrEmpty(jwt))
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
-            return await base.SendAsync(request, cancellationToken);
+            var response =  await base.SendAsync(request, cancellationToken);
+
+            if (!_refreshing && !string.IsNullOrEmpty(jwt) && response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                try
+                {
+                    _refreshing = true;
+
+                    if (await _authenticationService.RefreshAsync())
+                    {
+                        jwt = await _authenticationService.GetJwtAsync();
+
+                        if (isToServer && !string.IsNullOrEmpty(jwt))
+                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+
+                        response = await base.SendAsync(request, cancellationToken);
+                    }
+                }
+                finally
+                {
+                    _refreshing = false;
+                }
+            }
+
+            return response;
         }
     }
 }
